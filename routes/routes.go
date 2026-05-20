@@ -20,5 +20,11 @@ func SetupRoutes(r *gin.Engine) {
 		protected.GET("/me", handler.GetProfile)
 
 		protected.GET("/:username", handler.GetUserByUsername)
+
+		protected.POST("/matches", handler.CreateMatch)
+
+		protected.POST("/teams", handler.CreateTeam)
+
+		protected.POST("/teams/:id/players", handler.AddPlayersToTeam)
 	}
 }

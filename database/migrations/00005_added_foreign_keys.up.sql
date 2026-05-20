@@ -27,3 +27,11 @@ ALTER TABLE deliveries
     ADD CONSTRAINT deliveries_player_out_id_fkey
         FOREIGN KEY (player_out_id)
             REFERENCES players(id);
+
+select * from matches;
+
+ALTER TABLE innings
+    ADD COLUMN completed_overs INT DEFAULT 0,
+    ADD COLUMN balls_in_current_over INT DEFAULT 0;
+
+

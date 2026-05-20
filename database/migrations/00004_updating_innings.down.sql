@@ -5,3 +5,25 @@ ALTER TABLE deliveries
     DROP CONSTRAINT deliveries_bowler_id_fkey,
     DROP CONSTRAINT deliveries_fielder_id_fkey,
     DROP CONSTRAINT deliveries_player_out_id_fkey;
+
+ALTER TABLE matches
+    DROP COLUMN ball_type;
+
+DROP TABLE players CASCADE;
+
+ALTER TABLE deliveries
+    DROP CONSTRAINT deliveries_striker_id_fkey;
+
+ALTER TABLE deliveries
+    DROP CONSTRAINT deliveries_non_striker_id_fkey;
+
+ALTER TABLE deliveries
+    DROP CONSTRAINT deliveries_bowler_id_fkey;
+
+ALTER TABLE deliveries
+    DROP CONSTRAINT deliveries_fielder_id_fkey;
+
+ALTER TABLE deliveries
+    DROP CONSTRAINT deliveries_player_out_id_fkey;
+
+select * from users

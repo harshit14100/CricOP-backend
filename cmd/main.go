@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/handler"
 	"log"
 
 	"backend/database"
@@ -30,7 +31,14 @@ func main() {
 		})
 	})
 
+	r.POST("/matches", handler.CreateMatch)
+
+	r.POST("/teams", handler.CreateTeam)
 	routes.SetupRoutes(r)
+
+	for _, route := range r.Routes() {
+		log.Println(route.Method, route.Path)
+	}
 
 	r.Run(":8080")
 }
