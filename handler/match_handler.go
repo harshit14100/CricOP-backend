@@ -27,6 +27,7 @@ func CreateMatch(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": "match created successfully"})
+	c.JSON(http.StatusCreated, gin.H{"data": "match created successfully"})
 }

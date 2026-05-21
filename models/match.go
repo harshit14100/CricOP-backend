@@ -1,9 +1,9 @@
 package models
 
 type CreateMatchRequest struct {
-	Team1Id          string `json:"team1_id" :"team1Id"`
-	Team2Id          string `json:"team2_id" :"team2Id"`
-	Venue            string `json:"venue" :"venue"`
-	Overs            string `json:"overs" :"overs"`
-	Players_per_team int    `json:"players_per_team" :"players_Per_Team"`
+	Team1ID          string `json:"team1_id" binding:"required"`
+	Team2ID          string `json:"team2_id" binding:"required"`
+	Venue            string `json:"venue"`
+	Overs            int    `json:"overs" binding:"required"`
+	Players_per_team int    `json:"players_per_team" binding:"required"`
 }
