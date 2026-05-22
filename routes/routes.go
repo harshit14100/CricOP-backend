@@ -23,8 +23,9 @@ func SetupRoutes(r *gin.Engine) {
 
 		protected.POST("/matches", handler.CreateMatch)
 
-		protected.POST("/teams", handler.CreateTeam)
+		protected.POST("/teams", handler.CreateTeams) // teams
 
-		protected.POST("/teams/:id/players", handler.AddPlayersToTeam)
+		protected.POST("/teams/:id/players", handler.AddPlayerToTeam) // player
+
 	}
 }

@@ -1,8 +1,8 @@
 package services
 
 import (
+	"backend/database/dbHelper"
 	"backend/models"
-	"backend/repository"
 	"errors"
 )
 
@@ -14,6 +14,6 @@ func CreateMatch(req models.CreateMatchRequest, hostuserId string) error {
 		return errors.New("Players per team must be positive")
 
 	}
-	return repository.CreateMatch(req, hostuserId)
+	return dbHelper.CreateMatch(req, hostuserId)
 
 }

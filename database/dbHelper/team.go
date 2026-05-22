@@ -1,4 +1,4 @@
-package repository
+package dbHelper
 
 import (
 	"backend/database"

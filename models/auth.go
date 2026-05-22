@@ -19,3 +19,8 @@ type Users struct {
 	PhoneNo  string    `json:"phone_no"`
 	Password string    `json:"-"`
 }
+
+type PasswordRequest struct {
+	PhoneNo  string `json:"phone_no"`
+	Password string `json:"password"`
+}

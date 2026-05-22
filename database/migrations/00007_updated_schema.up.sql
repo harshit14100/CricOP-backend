@@ -127,6 +127,8 @@ CREATE TABLE match_players (
                                UNIQUE(match_id, player_id)
 );
 
+
+
 CREATE TABLE innings (
 
                          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

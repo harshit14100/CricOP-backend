@@ -53,3 +53,18 @@ func GetUserByPhone(phone string) (*models.Users, error) {
 
 	return &user, nil
 }
+
+func ResetPassword(phoneNo, hashedPassword string) error {
+	query := `
+UPDATE users
+SET password = $1
+WHERE phone_no = $2
+`
+	_, err := database.DB.Exec(
+		context.Background(),
+		query,
+		phoneNo,
+		hashedPassword,
+	)
+	return err
+}

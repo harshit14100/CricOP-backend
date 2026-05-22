@@ -1,4 +1,4 @@
-package repository
+package dbHelper
 
 import (
 	"backend/models"
@@ -43,3 +43,11 @@ func CreateMatch(
 
 	return err
 }
+
+//func GetTeamPlayers(teamID string) ([]string, error) {
+//	query := `
+//SELECT player_id FROM team_players
+//WHERE team_id = $1
+//`
+//
+//}

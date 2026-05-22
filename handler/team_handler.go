@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateTeam(c *gin.Context) {
+func CreateTeams(c *gin.Context) {
 
 	var req models.CreateTeamRequest
 
@@ -49,7 +49,7 @@ func CreateTeam(c *gin.Context) {
 	})
 }
 
-func AddPlayersToTeam(c *gin.Context) {
+func AddPlayerToTeam(c *gin.Context) {
 
 	var req models.AddPlayersToTeamRequest
 

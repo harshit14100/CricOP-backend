@@ -1,7 +1,7 @@
 package handler
 
 import (
-	dbHelper "backend/database/dbhelper"
+	dbHelper "backend/database/dbHelper"
 	"net/http"
 
 	"backend/models"

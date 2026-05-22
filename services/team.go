@@ -1,8 +1,8 @@
 package services
 
 import (
+	"backend/database/dbHelper"
 	"backend/models"
-	"backend/repository"
 	"errors"
 )
 
@@ -10,7 +10,7 @@ func CreateTeam(req models.CreateTeamRequest, createdBy string) error {
 	if req.Name == "" {
 		return errors.New("name is required")
 	}
-	return repository.CreateTeam(req, createdBy)
+	return dbHelper.CreateTeam(req, createdBy)
 
 }
 
@@ -18,7 +18,7 @@ func AddPlayerToTeam(teamId string, req models.AddPlayersToTeamRequest) error {
 	if len(req.PlayerIDs) <= 0 {
 		return errors.New("player_id is required")
 	}
-	teamExists, err := repository.TeamExists(teamId)
+	teamExists, err := dbHelper.TeamExists(teamId)
 	if err != nil {
 		return err
 	}
@@ -27,14 +27,14 @@ func AddPlayerToTeam(teamId string, req models.AddPlayersToTeamRequest) error {
 	}
 
 	for _, playerId := range req.PlayerIDs {
-		playerExists, err := repository.PlayerExists(playerId)
+		playerExists, err := dbHelper.PlayerExists(playerId)
 		if err != nil {
 			return err
 		}
 		if !playerExists {
 			return errors.New("player does not exist")
 		}
-		err = repository.AddPlayerToTeam(teamId, playerId)
+		err = dbHelper.AddPlayerToTeam(teamId, playerId)
 		if err != nil {
 			return err
 		}
