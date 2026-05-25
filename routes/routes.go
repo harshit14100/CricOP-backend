@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"time"
+
 	"backend/handler"
 	"backend/middleware"
 
@@ -9,7 +11,6 @@ import (
 )
 
 func SetupRoutes(r *gin.Engine) {
-
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://localhost:5173",
@@ -26,12 +27,14 @@ func SetupRoutes(r *gin.Engine) {
 		AllowHeaders: []string{
 			"Origin",
 			"Content-Type",
+			"Accept",
 			"Authorization",
 		},
 		ExposeHeaders: []string{
 			"Content-Length",
 		},
 		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
 	}))
 	auth := r.Group("/auth")
 	{
@@ -44,22 +47,29 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		users.GET("/players", handler.GetAllUsers)
 	}
+
 	protected := r.Group("/users")
 	protected.Use(middleware.AuthMiddleware())
 	{
 		protected.GET("/me", handler.GetProfile)
 
-		//protected.GET("/players", handler.GetAllUsers)
-
+		// matches routes
 		protected.POST("/matches", handler.CreateMatch)
+		protected.POST("/matches/:id/toss", handler.StartMatchToss)
 
+		// innings routes
+		protected.POST("/matches/:id/innings", handler.StartInning)
+
+		// teams routes
 		protected.POST("/teams", handler.CreateTeams)
-
 		protected.GET("/teams/:id/players", handler.GetTeamPlayers)
-
 		protected.POST("/teams/:id/player", handler.AddPlayerToTeam)
 
+		// protected user routes
 		protected.GET("/profile/:username", handler.GetUserByUsername)
+
+		// deliveries
+		protected.POST("/innings/:inning_id/deliveries", handler.CreateDelivery)
 
 	}
 }

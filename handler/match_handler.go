@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateMatch(c *gin.Context) {
@@ -30,4 +31,42 @@ func CreateMatch(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"data": "match created successfully"})
+}
+func StartMatchToss(c *gin.Context) {
+
+	matchIDParam := c.Param("id")
+
+	matchID, err := uuid.Parse(matchIDParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid match id",
+		})
+		return
+	}
+
+	var req models.Toss
+
+	err = c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request",
+		})
+		return
+	}
+
+	err = services.StartMatchToss(
+		matchID,
+		req,
+	)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "toss completed successfully",
+	})
 }

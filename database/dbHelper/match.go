@@ -44,10 +44,26 @@ func CreateMatch(
 	return err
 }
 
-//func GetTeamPlayers(teamID string) ([]string, error) {
-//	query := `
-//SELECT player_id FROM team_players
-//WHERE team_id = $1
-//`
-//
-//}
+func StartMatchToss(
+	matchID uuid.UUID,
+	tossWinnerID uuid.UUID,
+	tossDecision string,
+) error {
+	query := `
+UPDATE matches
+	SET
+		toss_winner_id = $1,
+		toss_decision = $2,
+		status = 'live',
+		started_at = NOW()
+	WHERE id = $3
+	`
+	_, err := database.DB.Exec(
+		context.Background(),
+		query,
+		tossWinnerID,
+		tossDecision,
+		matchID,
+	)
+	return err
+}
