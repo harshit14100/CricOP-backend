@@ -38,7 +38,7 @@ func PlayerExists(playerId string) (bool, error) {
 	query := `
 	SELECT EXISTS(
 	SELECT 1
-	FROM players
+	FROM users
 	WHERE id = $1
 	)`
 
@@ -98,4 +98,78 @@ func CreateTeam(
 	)
 
 	return err
+}
+
+func GetTeamPlayers(teamID string) ([]models.UserResponse, error) {
+
+	query := `
+	SELECT 
+		u.id,
+		u.name,
+		u.phone_no
+	FROM team_players tp
+	INNER JOIN users u
+	ON tp.player_id = u.id
+	WHERE tp.team_id = $1
+	`
+
+	rows, err := database.DB.Query(
+		context.Background(),
+		query,
+		teamID,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var players []models.UserResponse
+
+	for rows.Next() {
+
+		var player models.UserResponse
+
+		err := rows.Scan(
+			&player.ID,
+			&player.Name,
+			&player.PhoneNo,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		players = append(players, player)
+	}
+
+	return players, nil
+}
+func GetTeam(teamID string) (*models.Team, error) {
+	var team models.Team
+
+	query := `
+		SELECT team_id, name, created_by, created_at, updated_at
+		FROM teams
+		WHERE team_id = $1
+	`
+
+	err := database.DB.QueryRow(
+		context.Background(),
+		query,
+		teamID,
+	).Scan(
+		&team.ID,
+		&team.Name,
+		&team.CreatedBy,
+		&team.CreatedAt,
+		&team.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &team, nil
 }

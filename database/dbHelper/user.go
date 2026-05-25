@@ -68,3 +68,45 @@ WHERE phone_no = $2
 	)
 	return err
 }
+
+func GetAllUsers() ([]models.UserResponse, error) {
+
+	query := `
+	SELECT id,
+	       name,
+	       phone_no
+	FROM users
+	`
+
+	rows, err := database.DB.Query(
+		context.Background(),
+		query,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var users []models.UserResponse
+
+	for rows.Next() {
+
+		var user models.UserResponse
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.PhoneNo,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}

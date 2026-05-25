@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"backend/models"
 	"backend/services"
 	"net/http"
 
@@ -23,27 +22,18 @@ func GetUserByUsername(c *gin.Context) {
 		"username": username,
 	})
 }
+func GetAllUsers(c *gin.Context) {
 
-func ResetPassword(c *gin.Context) {
-	var req models.PasswordRequest
-	err := c.ShouldBind(&req)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-		return
-	}
-	err = services.ResetPassword(
-		req.PhoneNo,
-		req.Password,
-	)
+	users, err := services.GetALlUsers()
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "password reset successfully",
+		"data": users,
 	})
 }

@@ -33,7 +33,7 @@ func main() {
 
 	r.POST("/matches", handler.CreateMatch)
 
-	r.POST("/teams", handler.CreateTeam)
+	r.POST("/teams", handler.CreateTeams)
 	routes.SetupRoutes(r)
 
 	for _, route := range r.Routes() {

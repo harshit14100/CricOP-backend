@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"backend/database"
+	"backend/database/dbHelper"
+	"context"
 	"net/http"
 
 	"backend/models"
@@ -99,4 +102,63 @@ func AddPlayerToTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "players added successfully",
 	})
+}
+
+func GetTeam(c *gin.Context) {
+	teamID := c.Param("team_id")
+	team, err := dbHelper.GetTeam(teamID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "team not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"team": team,
+	})
+}
+
+func GetTeamPlayers(teamID *gin.Context) {
+
+	query := `
+	SELECT 
+		u.id,
+		u.name,
+		u.phone_no
+	FROM team_players tp
+	INNER JOIN users u
+	ON tp.player_id = u.id
+	WHERE tp.team_id = $1
+	`
+
+	rows, err := database.DB.Query(
+		context.Background(),
+		query,
+		teamID,
+	)
+
+	if err != nil {
+		return
+	}
+
+	defer rows.Close()
+
+	var players []models.UserResponse
+
+	for rows.Next() {
+
+		var player models.UserResponse
+
+		err := rows.Scan(
+			&player.ID,
+			&player.Name,
+			&player.PhoneNo,
+		)
+
+		if err != nil {
+			return
+		}
+
+		players = append(players, player)
+	}
+
+	return
 }

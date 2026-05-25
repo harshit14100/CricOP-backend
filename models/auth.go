@@ -24,3 +24,9 @@ type PasswordRequest struct {
 	PhoneNo  string `json:"phone_no"`
 	Password string `json:"password"`
 }
+
+type UserResponse struct {
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	PhoneNo string `json:"phone_no"`
+}

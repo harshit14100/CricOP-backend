@@ -2,6 +2,7 @@ package services
 
 import (
 	"backend/database/dbHelper"
+	"backend/models"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,4 +15,8 @@ func ResetPassword(phoneNo string, newPassword string) error {
 		return err
 	}
 	return dbHelper.ResetPassword(phoneNo, string(hashedpassword))
+}
+
+func GetALlUsers() ([]models.UserResponse, error) {
+	return dbHelper.GetAllUsers()
 }

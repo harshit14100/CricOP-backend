@@ -14,11 +14,11 @@ func CreateTeam(req models.CreateTeamRequest, createdBy string) error {
 
 }
 
-func AddPlayerToTeam(teamId string, req models.AddPlayersToTeamRequest) error {
+func AddPlayerToTeam(teamID string, req models.AddPlayersToTeamRequest) error {
 	if len(req.PlayerIDs) <= 0 {
 		return errors.New("player_id is required")
 	}
-	teamExists, err := dbHelper.TeamExists(teamId)
+	teamExists, err := dbHelper.TeamExists(teamID)
 	if err != nil {
 		return err
 	}
@@ -34,10 +34,14 @@ func AddPlayerToTeam(teamId string, req models.AddPlayersToTeamRequest) error {
 		if !playerExists {
 			return errors.New("player does not exist")
 		}
-		err = dbHelper.AddPlayerToTeam(teamId, playerId)
+		err = dbHelper.AddPlayerToTeam(teamID, playerId)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func GetTeamPlayers(teamID string) ([]models.UserResponse, error) {
+	return dbHelper.GetTeamPlayers(teamID)
 }

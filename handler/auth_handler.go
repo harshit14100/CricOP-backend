@@ -2,6 +2,7 @@ package handler
 
 import (
 	dbHelper "backend/database/dbHelper"
+	"backend/services"
 	"net/http"
 
 	"backend/models"
@@ -123,5 +124,38 @@ func Login(c *gin.Context) {
 			"phone_no": user.PhoneNo,
 		},
 		"token": token,
+	})
+}
+
+func ResetPassword(c *gin.Context) {
+
+	var req models.PasswordRequest
+
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	err = services.ResetPassword(
+		req.PhoneNo,
+		req.Password,
+	)
+
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "password updated successfully",
 	})
 }
