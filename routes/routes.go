@@ -13,8 +13,8 @@ import (
 func SetupRoutes(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
+			"http://192.168.0.145:5173",
 			"http://localhost:5173",
-			"http://127.0.0.1:5173",
 		},
 		AllowMethods: []string{
 			"GET",
@@ -43,9 +43,20 @@ func SetupRoutes(r *gin.Engine) {
 		auth.POST("/reset-password", handler.ResetPassword)
 	}
 
-	users := r.Group("/users")
+	//users := r.Group("/users")
+	//{
+	//	users.GET("/players", handler.GetAllUsers)
+	//}
+
+	public := r.Group("/users")
 	{
-		users.GET("/players", handler.GetAllUsers)
+		public.GET("/players", handler.GetAllUsers)
+		public.GET("/teams/:id/players", handler.GetTeamPlayers)
+		public.GET("/profile/:username", handler.GetUserByUsername)
+
+		// GetMatches / Live Scores endpoints
+		// public.GET("/matches", handler.GetLiveMatches)
+		// public.GET("/matches/:id", handler.GetMatch)
 	}
 
 	protected := r.Group("/users")
@@ -62,11 +73,11 @@ func SetupRoutes(r *gin.Engine) {
 
 		// teams routes
 		protected.POST("/teams", handler.CreateTeams)
-		protected.GET("/teams/:id/players", handler.GetTeamPlayers)
+		//protected.GET("/teams/:id/players", handler.GetTeamPlayers)
 		protected.POST("/teams/:id/player", handler.AddPlayerToTeam)
 
-		// protected user routes
-		protected.GET("/profile/:username", handler.GetUserByUsername)
+		// user routes
+		//protected.GET("/profile/:username", handler.GetUserByUsername)
 
 		// deliveries
 		protected.POST("/innings/:inning_id/deliveries", handler.CreateDelivery)
