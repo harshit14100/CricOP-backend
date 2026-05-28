@@ -8,7 +8,7 @@ import (
 
 func RecordBall(c context.Context, input models.RecordDeliveryRequest) error {
 
-	inningsData, err := dbHelper.GetInningsState(c, input.InningsID)
+	inningsData, err := dbHelper.GetInningsState(c, input.InningID)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func RecordBall(c context.Context, input models.RecordDeliveryRequest) error {
 		if !inningsData.AllowSoloBatting {
 			return dbHelper.CompleteInnings(
 				c,
-				input.InningsID,
+				input.InningID,
 			)
 		}
 
@@ -50,8 +50,5 @@ func RecordBall(c context.Context, input models.RecordDeliveryRequest) error {
 		}
 	}
 
-	return dbHelper.RecordBallTransaction(
-		c,
-		input,
-	)
+	return nil
 }

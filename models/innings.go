@@ -7,3 +7,17 @@ type StartInningRequest struct {
 	BattingTeamID uuid.UUID `json:"batting_team_id" binding:"required"`
 	BowlingTeamID uuid.UUID `json:"bowling_team_id" binding:"required"`
 }
+
+type InningsState struct {
+	Status string
+
+	MatchID string
+
+	BattingTeamID string
+
+	BowlingTeamID string
+
+	TotalWickets int
+
+	AllowSoloBatting bool
+}

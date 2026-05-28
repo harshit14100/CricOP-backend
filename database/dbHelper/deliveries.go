@@ -11,7 +11,7 @@ import (
 func InsertDelivery(
 	ctx context.Context,
 	tx pgx.Tx,
-	delivery models.DeliveryRecord,
+	d models.DeliveryRecord,
 ) error {
 
 	query := `
@@ -34,31 +34,40 @@ player_out_id,
 is_free_hit
 )
 VALUES (
-$1, $2, $3, $4, $5, $6, $7,
-$8, $9, $10, $11, $12, $13,
-$14, $15, $16
+$1, $2, $3, $4,
+$5, $6, $7, $8,
+$9, $10, $11, $12,
+$13, $14, $15, $16
 )
 `
 
 	_, err := tx.Exec(
 		ctx,
 		query,
+
 		uuid.New(),
-		delivery.InningID,
-		delivery.OverNumber,
-		delivery.BallNumber,
-		delivery.StrikerID,
-		delivery.NonStrikerID,
-		delivery.BowlerID,
-		delivery.RunsBat,
-		delivery.Extras,
-		delivery.ExtraType,
-		delivery.TotalRuns,
-		delivery.Wicket,
-		delivery.WicketType,
-		delivery.FielderID,
-		delivery.PlayerOutID,
-		delivery.IsFreeHit,
+
+		d.InningID,
+		d.OverNumber,
+		d.BallNumber,
+
+		d.StrikerID,
+		d.NonStrikerID,
+		d.BowlerID,
+
+		d.RunsBat,
+		d.Extras,
+		d.ExtraType,
+
+		d.TotalRuns,
+
+		d.Wicket,
+		d.WicketType,
+
+		d.FielderID,
+		d.PlayerOutID,
+
+		d.IsFreeHit,
 	)
 
 	return err
@@ -75,13 +84,14 @@ func UpdateInningStats(
 ) error {
 
 	query := `
-UPDATE innings
-SET total_runs = total_runs + $1,
-extras = extras + $2,
-wickets = wickets + $3,
-updated_at = NOW()
-WHERE id = $4
-`
+	UPDATE innings
+	SET total_runs = total_runs + $1,
+		extras = extras + $2,
+		wickets = wickets + $3,
+		legal_balls = legal_balls + $4,
+		updated_at = NOW()
+	WHERE id = $5
+	`
 
 	wicketCount := 0
 	if isWicket {
@@ -207,10 +217,10 @@ func RotateStrike(
 ) error {
 
 	query := `
-UPDATE innings
+UPDATE live_match_stats
 SET striker_id = non_striker_id,
 non_striker_id = striker_id
-WHERE id = $1
+WHERE innings_id = $1
 `
 
 	_, err := tx.Exec(

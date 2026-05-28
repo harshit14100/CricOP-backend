@@ -257,10 +257,6 @@ CREATE TABLE bowling_scorecards (
                                     UNIQUE(inning_id, player_id)
 );
 
--- =========================================================
--- INDEXES
--- =========================================================
-
 CREATE INDEX idx_users_phone_no
     ON users(phone_no);
 
@@ -291,3 +287,26 @@ CREATE INDEX idx_bowling_scorecards_inning_id
 ALTER TABLE deliveries
     ADD COLUMN is_legal_delivery BOOLEAN DEFAULT TRUE;
 
+CREATE TABLE live_match_stats (
+                                  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+                                  match_id UUID NOT NULL UNIQUE,
+                                  innings_id UUID NOT NULL,
+
+                                  batting_team_id UUID,
+                                  bowling_team_id UUID,
+
+                                  striker_id UUID,
+                                  non_striker_id UUID,
+                                  bowler_id UUID,
+
+                                  current_score INTEGER DEFAULT 0,
+                                  wickets INTEGER DEFAULT 0,
+                                  legal_balls INTEGER DEFAULT 0,
+
+                                  current_over INTEGER DEFAULT 0,
+
+                                  required_runs INTEGER DEFAULT 0,
+
+                                  last_updated TIMESTAMP DEFAULT NOW()
+);

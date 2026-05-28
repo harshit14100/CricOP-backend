@@ -14,7 +14,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://192.168.0.145:5173",
-			//"http://192.168.1.7:5173",
+			"http://192.168.1.7:5173",
 			"http://localhost:5173",
 		},
 		AllowMethods: []string{
@@ -86,6 +86,7 @@ func SetupRoutes(r *gin.Engine) {
 		//protected.GET("/profile/:username", handler.GetUserByUsername)
 
 		// deliveries
+		//protected.POST("/deliveries", handler.CreateDelivery)
 		protected.POST("/innings/:inning_id/deliveries", handler.CreateDelivery)
 
 	}

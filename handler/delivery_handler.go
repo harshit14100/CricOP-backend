@@ -3,6 +3,7 @@ package handler
 import (
 	"backend/models"
 	"backend/services"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,16 @@ func CreateDelivery(c *gin.Context) {
 	}
 
 	if err := services.RecordDelivery(inningID, req); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to record delivery: " + err.Error()})
+
+		fmt.Println("DELIVERY ERROR:", err)
+
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"error": "Failed to record delivery: " + err.Error(),
+			},
+		)
+
 		return
 	}
 

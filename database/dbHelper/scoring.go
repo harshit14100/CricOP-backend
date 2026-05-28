@@ -2,6 +2,7 @@ package dbHelper
 
 import (
 	"backend/database"
+	"backend/models"
 	"context"
 )
 
@@ -21,15 +22,22 @@ i.bowling_team_id,
 i.total_wickets,
 m.allow_solo_batting
 FROM innings i
-JOIN matches m ON m.id = i.match_id
+JOIN matches m
+ON m.id = i.match_id
 WHERE i.id = $1
 `
 
-	err := database.DB.GetContext(
+	err := database.DB.QueryRow(
 		c,
-		&innings,
 		query,
 		inningsID,
+	).Scan(
+		&innings.Status,
+		&innings.MatchID,
+		&innings.BattingTeamID,
+		&innings.BowlingTeamID,
+		&innings.TotalWickets,
+		&innings.AllowSoloBatting,
 	)
 
 	if err != nil {
@@ -55,13 +63,16 @@ AND team_id = $2
 AND is_retired = FALSE
 `
 
-	err := database.DB.GetContext(
+	err := database.DB.QueryRow(
 		c,
-		&count,
 		query,
 		matchID,
 		teamID,
-	)
+	).Scan(&count)
 
-	return count, err
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

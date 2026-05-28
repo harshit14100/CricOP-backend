@@ -29,3 +29,16 @@ func CreateInning(ctx context.Context, tx pgx.Tx, inningID string, matchID strin
 	)
 	return err
 }
+
+func GetLegalBalls(ctx context.Context, tx pgx.Tx, inningID string) (int, error) {
+	var legalBalls int
+	query := `
+	SELECT legal_balls
+	FROM innings
+	WHERE id = $1
+	FOR UPDATE
+	`
+
+	err := tx.QueryRow(ctx, query, inningID).Scan(&legalBalls)
+	return legalBalls, err
+}
