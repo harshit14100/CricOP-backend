@@ -287,3 +287,7 @@ CREATE INDEX idx_batting_scorecards_inning_id
 
 CREATE INDEX idx_bowling_scorecards_inning_id
     ON bowling_scorecards(inning_id);
+
+ALTER TABLE deliveries
+    ADD COLUMN is_legal_delivery BOOLEAN DEFAULT TRUE;
+
