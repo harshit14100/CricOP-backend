@@ -45,3 +45,8 @@ func AddPlayerToTeam(teamID string, req models.AddPlayersToTeamRequest) error {
 func GetTeamPlayers(teamID string) ([]models.UserResponse, error) {
 	return dbHelper.GetTeamPlayers(teamID)
 }
+
+func GetTeams() ([]models.Team, error) {
+
+	return dbHelper.GetTeams()
+}

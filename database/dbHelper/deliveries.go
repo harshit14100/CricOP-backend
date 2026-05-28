@@ -91,3 +91,76 @@ func UpdateBowlingScorecard(ctx context.Context, tx pgx.Tx, inningID string, bow
 	_, err := tx.Exec(ctx, query, uuid.New(), inningID, bowlerID, totalRuns, wicketCount)
 	return err
 }
+
+func RotateStrike(ctx context.Context, tx pgx.Tx, inningID string) error {
+	query := `
+		UPDATE matches
+		SET striker_id = non_striker_id,
+		    non_striker_id = striker_id
+		WHERE id = (SELECT match_id FROM innings WHERE id = $1)
+	`
+	_, err := tx.Exec(ctx, query, inningID)
+	return err
+}
+
+func CheckAndConcludeMatch(ctx context.Context, tx pgx.Tx, inningID string) (bool, error) {
+	query := `
+		SELECT 
+			i.match_id, i.inning_number, i.total_runs, i.wickets, i.completed_overs, i.balls_in_current_over,
+			m.overs AS match_total_overs, m.players_per_team, m.batting_team_id, m.bowling_team_id,
+			COALESCE((SELECT total_runs FROM innings WHERE match_id = i.match_id AND inning_number = 1), 0) AS inning1_runs
+		FROM innings i
+		JOIN matches m ON i.match_id = m.id
+		WHERE i.id = $1
+	`
+
+	var matchID, battingTeamID, bowlingTeamID string
+	var inningNumber, totalRuns, wickets, completedOvers, ballsInCurrentOver, matchTotalOvers, playersPerTeam, inning1Runs int
+
+	err := tx.QueryRow(ctx, query, inningID).Scan(
+		&matchID, &inningNumber, &totalRuns, &wickets, &completedOvers, &ballsInCurrentOver,
+		&matchTotalOvers, &playersPerTeam, &battingTeamID, &bowlingTeamID, &inning1Runs,
+	)
+	if err != nil {
+		return false, err
+	}
+	if inningNumber != 2 {
+		return false, nil
+	}
+
+	target := inning1Runs + 1
+	isAllOut := wickets >= (playersPerTeam - 1)
+	isOversFinished := completedOvers >= matchTotalOvers && ballsInCurrentOver == 0
+
+	var winnerTeamID *string
+	matchEnded := false
+
+	if totalRuns >= target {
+		winnerTeamID = &battingTeamID
+		matchEnded = true
+	} else if isAllOut || isOversFinished {
+		matchEnded = true
+		if totalRuns < inning1Runs {
+			winnerTeamID = &bowlingTeamID
+		} else {
+			winnerTeamID = nil
+		}
+	}
+
+	if matchEnded {
+		updateQuery := `
+			UPDATE matches
+			SET status = 'completed',
+			    winner_team_id = $1,
+			    ended_at = NOW()
+			WHERE id = $2
+		`
+		_, err = tx.Exec(ctx, updateQuery, winnerTeamID, matchID)
+		if err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+
+	return false, nil
+}

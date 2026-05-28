@@ -14,6 +14,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://192.168.0.145:5173",
+			//"http://192.168.1.7:5173",
 			"http://localhost:5173",
 		},
 		AllowMethods: []string{
@@ -53,10 +54,12 @@ func SetupRoutes(r *gin.Engine) {
 		public.GET("/players", handler.GetAllUsers)
 		public.GET("/teams/:id/players", handler.GetTeamPlayers)
 		public.GET("/profile/:username", handler.GetUserByUsername)
+		public.GET("/teams", handler.GetTeams)
 
 		// GetMatches / Live Scores endpoints
 		// public.GET("/matches", handler.GetLiveMatches)
 		// public.GET("/matches/:id", handler.GetMatch)
+		public.GET("/matches/:id/live", handler.GetLiveMatchState)
 	}
 
 	protected := r.Group("/users")
@@ -67,12 +70,15 @@ func SetupRoutes(r *gin.Engine) {
 		// matches routes
 		protected.POST("/matches", handler.CreateMatch)
 		protected.POST("/matches/:id/toss", handler.StartMatchToss)
+		protected.POST("/matches/start", handler.StartMatch)
+		protected.POST("/matches/setup", handler.SuperSetupMatchHandler)
 
 		// innings routes
 		protected.POST("/matches/:id/innings", handler.StartInning)
 
 		// teams routes
 		protected.POST("/teams", handler.CreateTeams)
+		//protected.GET("/teams", handler.GetTeam)
 		//protected.GET("/teams/:id/players", handler.GetTeamPlayers)
 		protected.POST("/teams/:id/player", handler.AddPlayerToTeam)
 

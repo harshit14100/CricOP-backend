@@ -1,41 +1,59 @@
 package handler
 
 import (
+	"backend/database/dbHelper"
+	"fmt"
+	"net/http"
+
 	"backend/models"
 	"backend/services"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 func CreateMatch(c *gin.Context) {
+
 	var req models.CreateMatchRequest
 
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request",
+		})
 		return
 	}
+
 	userID, exists := c.Get("user_id")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
 		return
 	}
-	hostuserId := userID.(string)
 
-	err = services.CreateMatch(req, hostuserId)
+	hostUserID := userID.(string)
+
+	matchID, err := services.CreateMatch(
+		req,
+		hostUserID,
+	)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"data": "match created successfully"})
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "match created successfully",
+		"id":      matchID,
+	})
 }
+
 func StartMatchToss(c *gin.Context) {
-
 	matchIDParam := c.Param("id")
-
 	matchID, err := uuid.Parse(matchIDParam)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -45,7 +63,6 @@ func StartMatchToss(c *gin.Context) {
 	}
 
 	var req models.Toss
-
 	err = c.ShouldBindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -58,7 +75,6 @@ func StartMatchToss(c *gin.Context) {
 		matchID,
 		req,
 	)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -68,5 +84,116 @@ func StartMatchToss(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "toss completed successfully",
+	})
+}
+
+func StartMatch(c *gin.Context) {
+	var req models.StartMatchRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request",
+		})
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
+		return
+	}
+
+	hostUserID := userID.(string)
+	matchID, err := services.StartMatch(
+		req,
+		hostUserID,
+	)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "match started successfully",
+		"match_id": matchID,
+	})
+}
+
+func SuperSetupMatchHandler(c *gin.Context) {
+
+	var req models.SuperStartMatchRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+
+		fmt.Println("BIND ERROR:", err)
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	userID, exists := c.Get("user_id")
+
+	if !exists {
+
+		fmt.Println("USER ID MISSING")
+
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "unauthorized",
+		})
+
+		return
+	}
+
+	hostUserID := userID.(string)
+
+	matchID, err := services.SuperSetupMatch(
+		req,
+		hostUserID,
+	)
+
+	if err != nil {
+
+		fmt.Println("SUPER SETUP ERROR:", err)
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message":  "match created successfully",
+		"match_id": matchID,
+	})
+}
+func GetLiveMatchState(c *gin.Context) {
+	matchID := c.Param("id")
+	if matchID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "match id parameter is required",
+		})
+		return
+	}
+	state, err := dbHelper.GetLiveMatchState(
+		c.Request.Context(),
+		matchID,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "failed to load match state: " + err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": state,
 	})
 }

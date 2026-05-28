@@ -173,3 +173,52 @@ func GetTeam(teamID string) (*models.Team, error) {
 
 	return &team, nil
 }
+
+func GetTeams() ([]models.Team, error) {
+
+	query := `
+	SELECT
+		team_id,
+		name,
+		created_at
+	FROM teams
+	WHERE archived_at IS NULL
+	ORDER BY created_at DESC
+	`
+
+	rows, err := database.DB.Query(
+		context.Background(),
+		query,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var teams []models.Team
+
+	for rows.Next() {
+
+		var team models.Team
+
+		err := rows.Scan(
+			&team.ID,
+			&team.Name,
+			&team.CreatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		teams = append(teams, team)
+	}
+
+	if teams == nil {
+		teams = []models.Team{}
+	}
+
+	return teams, nil
+}
