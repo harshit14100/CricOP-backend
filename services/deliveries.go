@@ -13,12 +13,10 @@ func RecordDelivery(
 ) error {
 
 	ctx := context.Background()
-
 	tx, err := database.DB.Begin(ctx)
 	if err != nil {
 		return err
 	}
-
 	defer tx.Rollback(ctx)
 
 	legalBalls, err := dbHelper.GetLegalBalls(
@@ -30,11 +28,8 @@ func RecordDelivery(
 		return err
 	}
 
-	overNumber := legalBalls / 6
-	ballNumber := (legalBalls % 6) + 1
 	totalRuns := req.RunsBat + req.Extras
 	isLegalDelivery := true
-
 	if req.ExtraType != nil &&
 		(*req.ExtraType == "wide" ||
 			*req.ExtraType == "no_ball") {
@@ -42,6 +37,8 @@ func RecordDelivery(
 		isLegalDelivery = false
 	}
 
+	overNumber := legalBalls / 6
+	ballNumber := (legalBalls % 6) + 1
 	delivery := models.DeliveryRecord{
 		InningID:        inningID,
 		OverNumber:      overNumber,

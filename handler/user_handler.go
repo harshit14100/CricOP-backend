@@ -22,9 +22,9 @@ func GetUserByUsername(c *gin.Context) {
 		"username": username,
 	})
 }
-func GetAllUsers(c *gin.Context) {
+func GetUsers(c *gin.Context) {
 
-	users, err := services.GetALlUsers()
+	users, err := services.GetUsers()
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

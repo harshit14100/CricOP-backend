@@ -17,6 +17,6 @@ func ResetPassword(phoneNo string, newPassword string) error {
 	return dbHelper.ResetPassword(phoneNo, string(hashedpassword))
 }
 
-func GetALlUsers() ([]models.UserResponse, error) {
-	return dbHelper.GetAllUsers()
+func GetUsers() ([]models.UserResponse, error) {
+	return dbHelper.GetUsers()
 }

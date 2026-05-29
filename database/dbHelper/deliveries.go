@@ -46,33 +46,25 @@ $13, $14, $15, $16
 		query,
 
 		uuid.New(),
-
 		d.InningID,
 		d.OverNumber,
 		d.BallNumber,
-
 		d.StrikerID,
 		d.NonStrikerID,
 		d.BowlerID,
-
 		d.RunsBat,
 		d.Extras,
 		d.ExtraType,
-
 		d.TotalRuns,
-
 		d.Wicket,
 		d.WicketType,
-
 		d.FielderID,
 		d.PlayerOutID,
-
 		d.IsFreeHit,
 	)
 
 	return err
 }
-
 func UpdateInningStats(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -86,10 +78,9 @@ func UpdateInningStats(
 	query := `
 	UPDATE innings
 	SET total_runs = total_runs + $1,
-		extras = extras + $2,
-		wickets = wickets + $3,
-		legal_balls = legal_balls + $4,
-		updated_at = NOW()
+	    extras = extras + $2,
+	    wickets = wickets + $3,
+	    legal_balls = legal_balls + $4
 	WHERE id = $5
 	`
 
@@ -182,12 +173,10 @@ EXCLUDED.wickets
 `
 
 	wicketCount := 0
-
 	if isWicket &&
 		wicketType != nil &&
 		*wicketType != "run_out" &&
 		*wicketType != "retired_hurt" {
-
 		wicketCount = 1
 	}
 

@@ -40,7 +40,6 @@ func CreateMatch(
 		req.Overs,
 		req.Players_per_team,
 	)
-
 	return "", err
 }
 
@@ -94,7 +93,7 @@ func GetMatches() ([]models.Match, error) {
 	rows, err := database.DB.Query(
 		context.Background(),
 		query,
-	)
+	) // fix db.query
 
 	if err != nil {
 		return nil, err
@@ -146,23 +145,17 @@ func StartMatch(
 	INSERT INTO matches (
 		id,
 		host_user_id,
-
 		team1_id,
 		team2_id,
-
 		venue,
 		overs,
-
 		toss_winner_id,
 		toss_decision,
-
 		batting_team_id,
 		bowling_team_id,
-
 		striker_id,
 		non_striker_id,
 		current_bowler_id,
-
 		status,
 		started_at
 	)
@@ -177,22 +170,16 @@ func StartMatch(
 	_, err := database.DB.Exec(
 		context.Background(),
 		query,
-
 		matchID,
 		hostUserID,
-
 		req.Team1ID,
 		req.Team2ID,
-
 		req.Venue,
 		req.Overs,
-
 		req.TossWinnerID,
 		req.TossDecision,
-
 		req.BattingTeamID,
 		req.BowlingTeamID,
-
 		req.StrikerID,
 		req.NonStrikerID,
 		req.CurrentBowlerID,
@@ -306,7 +293,7 @@ func GetLiveMatchState(ctx context.Context, matchID string) (*models.LiveMatchSt
 	`
 
 	var resp models.LiveMatchStateResponse
-	err := database.DB.QueryRow(ctx, query, matchID).Scan(
+	err := database.DB.QueryRow(ctx, query, matchID).Scan( // fix heading
 		&resp.MatchID,
 		&resp.Venue,
 		&resp.Overs,

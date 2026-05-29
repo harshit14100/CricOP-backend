@@ -13,8 +13,8 @@ import (
 func SetupRoutes(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"http://192.168.0.145:5173",
-			"http://192.168.1.7:5173",
+			"http://192.168.0.176:5173",
+			//"http://192.168.1.7:5173",
 			"http://localhost:5173",
 		},
 		AllowMethods: []string{
@@ -35,7 +35,7 @@ func SetupRoutes(r *gin.Engine) {
 			"Content-Length",
 		},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+		MaxAge:           7 * 24 * time.Hour,
 	}))
 	auth := r.Group("/auth")
 	{
@@ -51,10 +51,12 @@ func SetupRoutes(r *gin.Engine) {
 
 	public := r.Group("/users")
 	{
-		public.GET("/players", handler.GetAllUsers)
+		public.GET("/players", handler.GetUsers) // getusers
 		public.GET("/teams/:id/players", handler.GetTeamPlayers)
 		public.GET("/profile/:username", handler.GetUserByUsername)
 		public.GET("/teams", handler.GetTeams)
+
+		//public.GET("/matches/:id/live", handler.GetLiveMatchState)
 
 		// GetMatches / Live Scores endpoints
 		// public.GET("/matches", handler.GetLiveMatches)

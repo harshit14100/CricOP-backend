@@ -63,7 +63,7 @@ AND team_id = $2
 AND is_retired = FALSE
 `
 
-	err := database.DB.QueryRow(
+	err := database.DB.QueryRow( // use get select and excs
 		c,
 		query,
 		matchID,

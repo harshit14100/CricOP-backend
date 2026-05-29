@@ -11,7 +11,7 @@ type ScoreBallRequest struct {
 	DismissalType string `json:"dismissalType"`
 	FielderID     string `json:"fielderId"`
 	StrikerID     string `json:"strikerId" binding:"required"`
-	NonStrikerID  string `json:"nonStrikerId" binding:"required"`
+	NonStrikerID  string `json:"nonStrikerId"`
 	BowlerID      string `json:"bowlerId" binding:"required"`
 	NewBatsmanID  string `json:"newBatsmanId"`
 	NewBowlerID   string `json:"newBowlerId"`

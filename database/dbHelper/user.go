@@ -69,7 +69,7 @@ WHERE phone_no = $2
 	return err
 }
 
-func GetAllUsers() ([]models.UserResponse, error) {
+func GetUsers() ([]models.UserResponse, error) {
 
 	query := `
 	SELECT id,
@@ -90,11 +90,8 @@ func GetAllUsers() ([]models.UserResponse, error) {
 	defer rows.Close()
 
 	var users []models.UserResponse
-
 	for rows.Next() {
-
 		var user models.UserResponse
-
 		err := rows.Scan(
 			&user.ID,
 			&user.Name,
@@ -104,7 +101,6 @@ func GetAllUsers() ([]models.UserResponse, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		users = append(users, user)
 	}
 

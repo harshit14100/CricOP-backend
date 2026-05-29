@@ -8,10 +8,10 @@ type SignupRequest struct {
 	Password string `json:"password"`
 }
 
-type login struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
+//type Login struct {
+//	Username string `json:"username"`
+//	Password string `json:"password"`
+//}
 
 type Users struct {
 	ID       uuid.UUID `json:"id"`

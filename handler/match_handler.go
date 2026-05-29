@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"backend/database/dbHelper"
 	"fmt"
 	"net/http"
 
@@ -173,27 +172,5 @@ func SuperSetupMatchHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message":  "match created successfully",
 		"match_id": matchID,
-	})
-}
-func GetLiveMatchState(c *gin.Context) {
-	matchID := c.Param("id")
-	if matchID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "match id parameter is required",
-		})
-		return
-	}
-	state, err := dbHelper.GetLiveMatchState(
-		c.Request.Context(),
-		matchID,
-	)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to load match state: " + err.Error(),
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"data": state,
 	})
 }

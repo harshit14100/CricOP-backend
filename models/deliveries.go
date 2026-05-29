@@ -28,6 +28,8 @@ type RecordDeliveryRequest struct {
 
 type DeliveryRecord struct {
 	InningID        string
+	OverNumber      int
+	BallNumber      int
 	StrikerID       string
 	NonStrikerID    *string
 	BowlerID        string

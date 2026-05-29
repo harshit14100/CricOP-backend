@@ -9,15 +9,10 @@ type StartInningRequest struct {
 }
 
 type InningsState struct {
-	Status string
-
-	MatchID string
-
-	BattingTeamID string
-
-	BowlingTeamID string
-
-	TotalWickets int
-
-	AllowSoloBatting bool
+	Status           string `json:"status"`
+	MatchID          string `json:"match_id" binding:"required"`
+	BattingTeamID    string `json:"batting_team_id" binding:"required"`
+	BowlingTeamID    string `json:"bowling_team_id" binding:"required"`
+	TotalWickets     int    `json:"total_wickets"`
+	AllowSoloBatting bool   `json:"allow_solo_batting"`
 }
