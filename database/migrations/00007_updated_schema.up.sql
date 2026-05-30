@@ -310,3 +310,5 @@ CREATE TABLE live_match_stats (
 
                                   last_updated TIMESTAMP DEFAULT NOW()
 );
+
+select * from matches

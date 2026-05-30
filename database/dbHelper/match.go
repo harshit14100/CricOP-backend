@@ -70,70 +70,6 @@ func StartMatchToss(
 	return err
 }
 
-func GetMatches() ([]models.Match, error) {
-
-	query := `
-	SELECT 
-		m.id, 
-		m.host_user_id, 
-		m.team1_id, 
-		t1.name AS team_1_name, 
-		m.team2_id, 
-		t2.name AS team_2_name, 
-		m.venue, 
-		m.overs, 
-		m.players_per_team, 
-		m.status 
-	FROM matches m
-	INNER JOIN teams t1 ON m.team1_id = t1.team_id
-	INNER JOIN teams t2 ON m.team2_id = t2.team_id
-	ORDER BY m.created_at DESC
-	`
-
-	rows, err := database.DB.Query(
-		context.Background(),
-		query,
-	) // fix db.query
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	var matches []models.Match
-
-	for rows.Next() {
-
-		var match models.Match
-
-		err := rows.Scan(
-			&match.ID,
-			&match.HostUserID,
-			&match.Team1ID,
-			&match.Team1Name,
-			&match.Team2ID,
-			&match.Team2Name,
-			&match.Venue,
-			&match.Overs,
-			&match.PlayersPerTeam,
-			&match.Status,
-		)
-
-		if err != nil {
-			return nil, err
-		}
-
-		matches = append(matches, match)
-	}
-
-	if matches == nil {
-		matches = []models.Match{}
-	}
-
-	return matches, nil
-}
-
 func StartMatch(
 	req models.StartMatchRequest,
 	hostUserID string,
@@ -315,4 +251,77 @@ func GetLiveMatchState(ctx context.Context, matchID string) (*models.LiveMatchSt
 	}
 
 	return &resp, nil
+}
+
+func GetMatches() ([]models.MatchListResponse, error) {
+
+	query := `
+	SELECT
+		m.id AS match_id,
+		m.status,
+		m.team1_id,
+		m.team2_id,
+		t1.name,
+		t2.name,
+
+		COALESCE(m.venue, ''),
+		COALESCE(m.overs, 0),
+		COALESCE(i.inning_number, 1),
+		COALESCE(i.total_runs, 0),
+		COALESCE(i.wickets, 0),
+		i.batting_team_id,
+		COALESCE(bt.name, '')
+
+	FROM matches m
+
+	JOIN teams t1
+		ON m.team1_id = t1.team_id
+
+	JOIN teams t2
+		ON m.team2_id = t2.team_id
+
+	LEFT JOIN innings i
+		ON i.match_id = m.id
+
+	LEFT JOIN teams bt
+		ON bt.team_id = i.batting_team_id
+
+	ORDER BY m.created_at DESC
+	`
+
+	rows, err := database.DB.Query(
+		context.Background(),
+		query,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var matches []models.MatchListResponse
+	for rows.Next() {
+		var match models.MatchListResponse
+		err := rows.Scan(
+			&match.ID,
+			&match.Status,
+			&match.Team1ID,
+			&match.Team2ID,
+			&match.Team1Name,
+			&match.Team2Name,
+			&match.Venue,
+			&match.Overs,
+			&match.CurrentInnings,
+			&match.TotalRuns,
+			&match.Wickets,
+			&match.BattingTeamID,
+			&match.BattingTeamName,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		matches = append(matches, match)
+	}
+	return matches, nil
 }

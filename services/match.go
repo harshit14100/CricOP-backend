@@ -35,9 +35,9 @@ func StartMatchToss(matchID uuid.UUID,
 	return dbHelper.StartMatchToss(matchID, req.TossWinnerID, req.TossDecision)
 }
 
-func GetAllMatches() ([]models.Match, error) {
-	return dbHelper.GetMatches()
-}
+//func GetAllMatches() ([]models.Match, error) {
+//	return dbHelper.GetMatches()
+//}
 
 func StartMatch(
 	req models.StartMatchRequest,
@@ -56,4 +56,15 @@ func SuperSetupMatch(
 		req,
 		hostUserID,
 	)
+}
+
+func GetMatches() ([]models.MatchListResponse, error) {
+
+	matches, err := dbHelper.GetMatches()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return matches, nil
 }

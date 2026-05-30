@@ -14,7 +14,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://192.168.0.176:5173",
-			//"http://192.168.1.7:5173",
+			"http://192.168.1.7:5173",
 			"http://localhost:5173",
 		},
 		AllowMethods: []string{
@@ -62,6 +62,8 @@ func SetupRoutes(r *gin.Engine) {
 		// public.GET("/matches", handler.GetLiveMatches)
 		// public.GET("/matches/:id", handler.GetMatch)
 		public.GET("/matches/:id/live", handler.GetLiveMatchState)
+		public.GET("/matches", handler.GetMatches)
+
 	}
 
 	protected := r.Group("/users")

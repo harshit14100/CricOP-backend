@@ -1,5 +1,7 @@
 package models
 
+import "github.com/google/uuid"
+
 type LiveMatchResponse struct {
 	ID        string `json:"id"`
 	Team1ID   string `json:"team1_id"`
@@ -56,4 +58,20 @@ type BowlerScore struct {
 	Maidens  int    `json:"maidens"`
 	Runs     int    `json:"runs"`
 	Wickets  int    `json:"wickets"`
+}
+
+type MatchListResponse struct {
+	ID              uuid.UUID `json:"id"`
+	Status          string    `json:"status"`
+	Team1ID         uuid.UUID `json:"team1_id"`
+	Team2ID         uuid.UUID `json:"team2_id"`
+	Team1Name       string    `json:"team_1_name"`
+	Team2Name       string    `json:"team_2_name"`
+	Venue           string    `json:"venue"`
+	Overs           int       `json:"overs"`
+	CurrentInnings  int       `json:"currentInnings"`
+	TotalRuns       int       `json:"total_runs"`
+	Wickets         int       `json:"wickets"`
+	BattingTeamID   uuid.UUID `json:"batting_team_id"`
+	BattingTeamName string    `json:"batting_team_name"`
 }
